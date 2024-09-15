@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- Table for Users -->
+    <changeSet id="1" author="">
+        <createTable tableName="users">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+          
+        </createTable>
+    </changeSet>
+
+    <!-- Table for Purchase Orders -->
+    <changeSet id="2" author="yourname">
+        <createTable tableName="purchase_orders">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="status" type="VARCHAR(50)"/>
+            <column name="order_date" type="DATE"/>
+            <column name="total" type="DECIMAL(15,2)"/>
+            <column name="user_id" type="BIGINT"/>
+            <column name="title" type="VARCHAR(255)"/>
+            <column name="approval_workflow" type="VARCHAR(50)"/>
+            <column name="current_approval_level" type="VARCHAR(50)"/>
+            <column name="company" type="VARCHAR(255)"/>
+            <column name="address" type="VARCHAR(255)"/>
+            <column name="company_details" type="TEXT"/>
+            <column />
+        </createTable>
+
+        <addForeignKeyConstraint
+            baseTableName="purchase_orders"
+            baseColumnNames="user_id"
+            constraintName="fk_purchase_order_user"
+            referencedTableName="users"
+            referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- Table for Approval Levels -->
+    <changeSet id="3" author="yourname">
+        <createTable tableName="approval_levels">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="level" type="INT"/>
+            <column name="approver_id" type="BIGINT"/>
+            <column name="status" type="VARCHAR(50)"/>
+            <column name="approver_role" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="approval_step_number" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="purchase_order_id" type="BIGINT"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+            baseTableName="approval_levels"
+            baseColumnNames="purchase_order_id"
+            constraintName="fk_approval_level_purchase_order"
+            referencedTableName="purchase_orders"
+            referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- Table for Approval Workflows -->
+    <changeSet id="4" author="yourname">
+        <createTable tableName="approval_workflows">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Table for Purchase Order Items -->
+    <changeSet id="5" author="yourname">
+        <createTable tableName="purchase_order_items">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="item_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="quantity" type="INT"/>
+            <column name="unit_price" type="DECIMAL(15,2)"/>
+            <column name="total_amount" type="DECIMAL(15,2)"/>
+            <column name="purchase_order_id" type="BIGINT"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+            baseTableName="purchase_order_items"
+            baseColumnNames="purchase_order_id"
+            constraintName="fk_item_purchase_order"
+            referencedTableName="purchase_orders"
+            referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- Table for Approval History -->
+    <changeSet id="6" author="yourname">
+        <createTable tableName="approval_history">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="purchase_order_id" type="BIGINT"/>
+            <column name="approval_level_id" type="BIGINT"/>
+            <column name="approved" type="BOOLEAN"/>
+            <column name="approved_date" type="DATE"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+            baseTableName="approval_history"
+            baseColumnNames="purchase_order_id"
+            constraintName="fk_approval_history_purchase_order"
+            referencedTableName="purchase_orders"
+            referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+            baseTableName="approval_history"
+            baseColumnNames="approval_level_id"
+            constraintName="fk_approval_history_approval_level"
+            referencedTableName="approval_levels"
+            referencedColumnNames="id"/>
+    </changeSet>
+
+</databaseChangeLog>
